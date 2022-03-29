@@ -59,7 +59,7 @@ aws iam attach-role-policy --profile $AWS_PROFILE --role-name MyGreengrassV2Toke
 ### Update recipes
 * In components/recipe/aws.sagemaker.edgeManager-0.1.0.yaml, update the URI with by replacing <YOUR_BUCKET_NAME> with your S3 bucket for Greengrass v2 components:
 ```yaml
-- URI: s3://YOUR_BUCKET_NAME/artifacts/com.aws.secretsManagerPythonExample/0.1.0/secrets_manager_demo.py
+- URI: s3://YOUR_BUCKET_NAME/artifacts/nl.koendelaat.smartMeter/0.0.6/smart_meter_IoT.py
 ```
 
 ### Upload your custom components to S3 bucket

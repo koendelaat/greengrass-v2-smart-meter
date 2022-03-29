@@ -25,11 +25,10 @@ COMPONENT_NAME=$2
 COMPONENT_VERSION=$3
 S3_BUCKET_NAME=$4
 AWS_REGION=$5
+(
+cd components/artifacts/$COMPONENT_NAME/$COMPONENT_VERSION || exit
 
-cd components/artifacts/$COMPONENT_NAME/$COMPONENT_VERSION
+for FILE in *; do aws s3api put-object --profile $AWS_PROFILE --bucket $S3_BUCKET_NAME --key $COMPONENT_NAME/$COMPONENT_VERSION/$FILE --body $FILE; done
+)
 
-for FILE in *; do aws s3api put-object --profile $AWS_PROFILE --bucket $S3_BUCKET_NAME --key artifacts/$COMPONENT_NAME/$COMPONENT_VERSION/$FILE --body $FILE; done
-
-cd ../../..
-
-aws greengrassv2 create-component-version --profile $AWS_PROFILE --inline-recipe fileb://recipes/$COMPONENT_NAME-$COMPONENT_VERSION.yaml --region $AWS_REGION
+aws greengrassv2 create-component-version --profile $AWS_PROFILE --inline-recipe fileb://components/recipes/$COMPONENT_NAME.yaml --region $AWS_REGION

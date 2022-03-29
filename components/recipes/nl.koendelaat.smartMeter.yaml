@@ -16,27 +16,28 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ---
 RecipeFormatVersion: 2020-01-25
-ComponentName: com.aws.secretsManagerPythonExample
-ComponentVersion: '0.1.0'
+ComponentName: nl.koendelaat.smartMeter
+ComponentVersion: '0.0.6'
 ComponentDescription: |
-  Demonstrates how to use AWS Secrets Manager with Greengrass v2 in Python, and publish to AWS IoT Core.
-ComponentPublisher: Amazon Web Services, Inc.
+  Monitor smart meter and upload to PVOutput
+ComponentPublisher: Koen de Laat
 ComponentDependencies:
   aws.greengrass.SecretManager:
-    VersionRequirement: 2.0.5
+    VersionRequirement: 2.1.0
     DependencyType: SOFT
 ComponentConfiguration:
   DefaultConfiguration:
     accessControl:
       aws.greengrass.ipc.mqttproxy:
-        "com.aws.secretsManagerPythonExample:pub:1":
+        "nl.koendelaat.smartMeter:pub:1":
           policyDescription: Allows access to publish to IoT Core topic(s).
           operations:
             - "aws.greengrass#PublishToIoTCore"
           resources:
-            - "ggv2/secrets/demo"
+            - "smartmeter/+/consumption"
+            - "smartmeter/+/generation"
       aws.greengrass.SecretManager:
-        "com.aws.secretsManagerPythonExample:secrets:1":
+        "nl.koendelaat.smartMeter:secrets:1":
           policyDescription: Allows access to Secret Manager value(s)
           operations:
             - "aws.greengrass#GetSecretValue"
@@ -46,9 +47,10 @@ Manifests:
   - Platform:
       os: all
     Artifacts:
-      - URI: s3://YOUR_BUCKET_NAME/artifacts/com.aws.secretsManagerPythonExample/0.1.0/secrets_manager_demo.py
+      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.smartMeter/0.0.6/smart_meter.py
+      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.smartMeter/0.0.6/smart_meter_IoT.py
     Lifecycle:
       Install: |
-        pip3 install awsiotsdk
+        pip3 install awsiotsdk dsmr_parser
       Run: |
-        python3 {artifacts:path}/secrets_manager_demo.py
+        python3 {artifacts:path}/smart_meter_IoT.py
