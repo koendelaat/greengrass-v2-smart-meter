@@ -17,7 +17,7 @@
 ---
 RecipeFormatVersion: 2020-01-25
 ComponentName: nl.koendelaat.sbfspot
-ComponentVersion: '0.0.1'
+ComponentVersion: '0.0.3'
 ComponentDescription: |
   Monitor SMA inverter and upload to PVOutput
 ComponentPublisher: Koen de Laat
@@ -25,6 +25,8 @@ ComponentDependencies:
   aws.greengrass.SecretManager:
     VersionRequirement: 2.1.0
     DependencyType: SOFT
+  aws.greengrass.DockerApplicationManager:
+    VersionRequirement: ~2.0.0
 ComponentConfiguration:
   DefaultConfiguration:
     accessControl:
@@ -39,16 +41,17 @@ Manifests:
   - Platform:
       os: all
     Artifacts:
-      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.sbfspot/0.0.1/generate_config.py
-      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.sbfspot/0.0.1/SBFspot.tpl
-      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.sbfspot/0.0.1/SBFspotUpload.tpl
-      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.sbfspot/0.0.1/docker-compose.yml
-      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.sbfspot/0.0.1/docker-compose.yml
-      - URI: docker:koendelaat/sbfspot-collector:0.0.1
-      - URI: docker:koendelaat/sbfspot-uploader:0.0.1
+      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.sbfspot/0.0.3/generate_config.py
+      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.sbfspot/0.0.3/SBFspot.tpl
+      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.sbfspot/0.0.3/SBFspotUpload.tpl
+      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.sbfspot/0.0.3/docker-compose.yml
+      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.sbfspot/0.0.3/docker-compose.yml
+      - URI: docker:koendelaat/sbfspot-collector:0.0.3
+      - URI: docker:koendelaat/sbfspot-uploader:0.0.3
     Lifecycle:
       Install: |
         pip3 install awsiotsdk
+        mkdir -p -m=777 {work:path}/data {work:path}/config
         python3 {artifacts:path}/generate_config.py
       Run: |
         docker-compose -f {artifacts:path}/docker-compose.yml up
