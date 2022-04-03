@@ -1,0 +1,54 @@
+# MIT No Attribution
+#
+# Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of
+# this software and associated documentation files (the "Software"), to deal in
+# the Software without restriction, including without limitation the rights to
+# use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+# the Software, and to permit persons to whom the Software is furnished to do so.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+# FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+# COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+# IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+---
+RecipeFormatVersion: 2020-01-25
+ComponentName: nl.koendelaat.sbfspot
+ComponentVersion: '0.0.1'
+ComponentDescription: |
+  Monitor SMA inverter and upload to PVOutput
+ComponentPublisher: Koen de Laat
+ComponentDependencies:
+  aws.greengrass.SecretManager:
+    VersionRequirement: 2.1.0
+    DependencyType: SOFT
+ComponentConfiguration:
+  DefaultConfiguration:
+    accessControl:
+      aws.greengrass.SecretManager:
+        "nl.koendelaat.sbfspot:secrets:1":
+          policyDescription: Allows access to Secret Manager value(s)
+          operations:
+            - "aws.greengrass#GetSecretValue"
+          resources:
+            - "*"
+Manifests:
+  - Platform:
+      os: all
+    Artifacts:
+      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.sbfspot/0.0.1/generate_config.py
+      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.sbfspot/0.0.1/SBFspot.tpl
+      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.sbfspot/0.0.1/SBFspotUpload.tpl
+      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.sbfspot/0.0.1/docker-compose.yml
+      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.sbfspot/0.0.1/docker-compose.yml
+      - URI: docker:koendelaat/sbfspot-collector:0.0.1
+      - URI: docker:koendelaat/sbfspot-uploader:0.0.1
+    Lifecycle:
+      Install: |
+        pip3 install awsiotsdk
+        python3 {artifacts:path}/generate_config.py
+      Run: |
+        docker-compose -f {artifacts:path}/docker-compose.yml up

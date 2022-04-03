@@ -1,0 +1,18 @@
+version: '3'
+services:
+  collector:
+    restart: unless-stopped
+    image: koendelaat/sbfspot-collector:0.0.1
+    volumes:
+      - "$PWD/data:/var/smadata"
+      - "$PWD/config/SBFspot.cfg:/opt/sbfspot/SBFspot.cfg"
+      - "/etc/localtime:/etc/localtime:ro"
+
+  uploader:
+    restart: unless-stopped
+    image: koendelaat/sbfspot-uploader:0.0.1
+    volumes:
+      - "$PWD/data:/var/smadata"
+      - "$PWD/config/SBFspotUpload.cfg:/opt/sbfspot/SBFspotUpload.cfg"
+      - "/etc/localtime:/etc/localtime:ro"
+
