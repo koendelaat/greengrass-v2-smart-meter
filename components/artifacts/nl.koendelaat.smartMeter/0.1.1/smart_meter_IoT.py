@@ -15,6 +15,7 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import asyncio
+import datetime
 import json
 import logging
 import os
@@ -23,8 +24,9 @@ import sys
 import awsiot.greengrasscoreipc
 import awsiot.greengrasscoreipc.model as model
 
+from pvoutput import PVOutput
 from smart_meter import create_connection
-from sqlite import get_or_create_db, get_data, add_consumption
+from sqlite import get_or_create_db, get_data, add_consumption, set_last_update
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
@@ -91,8 +93,20 @@ def get_callback(db, iot_handler, pvoutput):
         telegram_s = json.loads(telegram.to_json())
         telegram_s = {k: v for k, v in telegram_s.items() if k in iot_fields}
         iot_handler.publish_data(telegram_s)
-        print(telegram.CURRENT_ELECTRICITY_USAGE.value - telegram.CURRENT_ELECTRICITY_DELIVERY.value)
-        get_data(db)
+
+        last_dt = None
+        for row in get_data(db_conn, message_timestamp):
+            dt = datetime.datetime.fromtimestamp(row[1])
+            response = pvoutput.add_consumption(dt, row[2])
+            if response.ok:
+                last_dt = dt
+            else:
+                iot_handler.publish_data(dict(error=dict(response_status_code=response.status_code,
+                                                         response_reason=response.reason,
+                                                         response_text=response,
+                                                         request_url=response.url)))
+        if last_dt:
+            set_last_update(db_conn, last_dt)
 
     return callback
 
@@ -101,6 +115,10 @@ if __name__ == '__main__':
     loop = asyncio.get_event_loop()
 
     class DummyHandler:
+        def __init__(self):
+            self.api_key = '1234'
+            self.system_id = 1234
+
         def publish_data(self, data=None):
             print(data)
 
@@ -110,9 +128,9 @@ if __name__ == '__main__':
     handler.publish_data("Startup!")
     db_conn = get_or_create_db()
 
-    telegram_callback = get_callback(db_conn, handler, None)
+    pvoutput = PVOutput(handler.api_key, handler.system_id)
 
-
+    telegram_callback = get_callback(db_conn, handler, pvoutput)
 
     try:
         # connect and keep connected until interrupted by ctrl-c

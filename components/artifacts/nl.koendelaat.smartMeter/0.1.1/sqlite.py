@@ -30,7 +30,7 @@ def get_or_create_db(filename="consumption.db", create_script="createSQLiteDB.sq
 
 def add_consumption(con, dt, etotal):
     cur = con.cursor()
-    cur.execute(f"INSERT INTO Consumption VALUES ({dt.timestamp()}, {int(etotal * 1000)})")
+    cur.execute(f"INSERT INTO Consumption VALUES (?, ?)", (dt.timestamp(), int(etotal * 1000)))
     con.commit()
     cur.close()
 
@@ -43,13 +43,27 @@ def add_dummy_data(con):
         power = 0.7  # kW
         etotal = 10000.0 + power*i/60
 
-        cur.execute(f"INSERT INTO Consumption VALUES ({dt.timestamp()}, {int(etotal * 1000)})")
+        cur.execute(f"INSERT INTO Consumption VALUES (?, ?)", (dt.timestamp(), int(etotal * 1000)))
     con.commit()
     cur.close()
 
 
-def get_data(con):
+def get_data(con, dt):
     cur = con.cursor()
-    for row in cur.execute('SELECT * FROM vwAvgConsumption'):
-        print(row)
+    timestamp = dt.timestamp()
+    max_timestamp = timestamp - (timestamp % 300)
+    if timestamp % 300 < 150:
+        max_timestamp -= 300
+    for row in cur.execute(f"SELECT Nearest5min, CAST(strftime('%s', Nearest5min, 'UTC') AS datetime), PowerUsed FROM"
+                           f" vwAvgConsumption WHERE CAST(strftime('%s', Nearest5min, 'UTC') AS datetime) > "
+                           f"(SELECT LastUpdate FROM TempData) AND CAST(strftime('%s', Nearest5min, 'UTC')"
+                           f" AS datetime) <= {max_timestamp}"):
+        yield row
+    cur.close()
+
+
+def set_last_update(con, dt):
+    cur = con.cursor()
+    cur.execute(f"UPDATE TempData SET LastUpdate = {int(dt.timestamp())}")
+    con.commit()
     cur.close()

@@ -4,6 +4,8 @@ CREATE Table TempData (
     LastUpdate datetime NOT NULL
 );
 
+INSERT INTO TempData VALUES (1640991600);
+
 CREATE Table Consumption (
 	TimeStamp datetime NOT NULL,
 	ETotal int(8) NOT NULL,

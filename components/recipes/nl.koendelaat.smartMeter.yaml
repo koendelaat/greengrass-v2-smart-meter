@@ -17,7 +17,7 @@
 ---
 RecipeFormatVersion: 2020-01-25
 ComponentName: nl.koendelaat.smartMeter
-ComponentVersion: '0.0.9'
+ComponentVersion: '0.1.1'
 ComponentDescription: |
   Monitor smart meter and upload to PVOutput
 ComponentPublisher: Koen de Laat
@@ -47,12 +47,13 @@ Manifests:
   - Platform:
       os: all
     Artifacts:
-      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.smartMeter/0.0.9/smart_meter.py
-      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.smartMeter/0.0.9/smart_meter_IoT.py
-      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.smartMeter/0.0.9/sqlite.py
-      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.smartMeter/0.0.9/createSQLiteDB.sql
+      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.smartMeter/0.1.1/smart_meter.py
+      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.smartMeter/0.1.1/smart_meter_IoT.py
+      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.smartMeter/0.1.1/sqlite.py
+      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.smartMeter/0.1.1/pvoutput.py
+      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.smartMeter/0.1.1/createSQLiteDB.sql
     Lifecycle:
       Install: |
-        pip3 install awsiotsdk dsmr_parser
+        pip3 install awsiotsdk dsmr_parser requests
       Run: |
         python3 {artifacts:path}/smart_meter_IoT.py
