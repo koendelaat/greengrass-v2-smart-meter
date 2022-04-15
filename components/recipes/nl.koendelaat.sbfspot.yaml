@@ -17,7 +17,7 @@
 ---
 RecipeFormatVersion: 2020-01-25
 ComponentName: nl.koendelaat.sbfspot
-ComponentVersion: '0.0.3'
+ComponentVersion: '0.0.5'
 ComponentDescription: |
   Monitor SMA inverter and upload to PVOutput
 ComponentPublisher: Koen de Laat
@@ -41,13 +41,12 @@ Manifests:
   - Platform:
       os: all
     Artifacts:
-      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.sbfspot/0.0.3/generate_config.py
-      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.sbfspot/0.0.3/SBFspot.tpl
-      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.sbfspot/0.0.3/SBFspotUpload.tpl
-      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.sbfspot/0.0.3/docker-compose.yml
-      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.sbfspot/0.0.3/docker-compose.yml
-      - URI: docker:koendelaat/sbfspot-collector:0.0.3
-      - URI: docker:koendelaat/sbfspot-uploader:0.0.3
+      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.sbfspot/0.0.5/generate_config.py
+      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.sbfspot/0.0.5/SBFspot.tpl
+      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.sbfspot/0.0.5/SBFspotUpload.tpl
+      - URI: s3://greengrass-component-artifacts-eu-west-1-306752674640/nl.koendelaat.sbfspot/0.0.5/docker-compose.yml
+      - URI: docker:koendelaat/sbfspot-collector:0.0.5
+      - URI: docker:koendelaat/sbfspot-uploader:0.0.5
     Lifecycle:
       Install: |
         pip3 install awsiotsdk

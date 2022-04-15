@@ -11,7 +11,7 @@ class PVOutputConfig:
         self.thing_name = os.getenv('AWS_IOT_THING_NAME', "UNKNOWN")
         self.ipc_client = ipc_client
         self.api_key = self.get_secret('pvoutput_api_key').get('api_key')
-        self.system_config = self.get_secret('pvoutput_systems').get(self.thing_name, {})
+        self.system_config = self.get_secret('pvoutput_systems').get(self.thing_name, None)
         if self.api_key is None:
             raise RuntimeError("No API key found")
         if self.system_config is None:
@@ -22,9 +22,6 @@ class PVOutputConfig:
 
         with open(self.template_file, 'rt') as f:
             self.template = Template(f.read())
-
-        # result = self.template.substitute(d)
-        # print(result)
 
     def write(self):
         values = dict(thing_name=self.thing_name, ip_address=self.system_config.get("ip_address"),
@@ -46,25 +43,7 @@ class PVOutputConfig:
             return dict()
 
 
-class PVOutputConfigDummy(PVOutputConfig):
-    def get_secret(self, secret_id):
-        secrets = {
-            "pvoutput_systems": {
-                "MyThing": {
-                    "system_id": 12345,
-                    "password": "***REMOVED***",
-                    "ip_address": "192.168.178.165",
-                    "serial": 1234567890
-                }
-            },
-            "pvoutput_api_key": {
-                    "api_key": "***REMOVED***"
-            }
-        }
-        return secrets.get(secret_id, {})
-
-
 if __name__ == '__main__':
     ipc_client = awsiot.greengrasscoreipc.connect()
-    PVOutputConfigDummy(ipc_client, template_file='SBFspot.tpl', config_file='config/SBFspot.cfg').write()
-    PVOutputConfigDummy(ipc_client, template_file='SBFspotUpload.tpl', config_file='config/SBFspotUpload.cfg').write()
+    PVOutputConfig(ipc_client, template_file='SBFspot.tpl', config_file='config/SBFspot.cfg').write()
+    PVOutputConfig(ipc_client, template_file='SBFspotUpload.tpl', config_file='config/SBFspotUpload.cfg').write()
