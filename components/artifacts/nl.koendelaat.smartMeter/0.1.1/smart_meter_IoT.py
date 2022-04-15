@@ -44,17 +44,8 @@ class IoTHandler:
         if self.system_id is None:
             raise RuntimeError(f"No system_id found for {self.thing_name}")
 
-    def publish_data(self, data=None):
+    def publish_data(self, payload):
         try:
-            if data is None:
-                payload = {
-                    'api_key': self.api_key,
-                    'system_id': self.system_id
-                }
-                payload.update(os.environ)
-            else:
-                payload = data
-
             publish_operation = self.ipc_client.new_publish_to_iot_core()
             publish_operation.activate(
                 request=model.PublishToIoTCoreRequest(topic_name=f'smartmeter/{self.thing_name}/consumption',
@@ -114,15 +105,6 @@ def get_callback(db, iot_handler, pvoutput):
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
 
-    class DummyHandler:
-        def __init__(self):
-            self.api_key = '1234'
-            self.system_id = 1234
-
-        def publish_data(self, data=None):
-            print(data)
-
-    # handler = DummyHandler()
     handler = IoTHandler()
 
     handler.publish_data("Startup!")
