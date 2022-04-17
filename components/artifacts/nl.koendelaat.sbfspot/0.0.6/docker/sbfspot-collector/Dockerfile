@@ -1,4 +1,4 @@
-FROM koendelaat/sbfspot-base:0.0.5
+FROM koendelaat/sbfspot-base:0.0.6
 
 ENV SMADATA /var/smadata
 ENV SBFSPOTDIR /opt/sbfspot

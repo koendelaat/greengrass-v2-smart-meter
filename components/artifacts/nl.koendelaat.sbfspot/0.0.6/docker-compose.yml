@@ -2,7 +2,7 @@ version: '3'
 services:
   collector:
     restart: unless-stopped
-    image: koendelaat/sbfspot-collector:0.0.5
+    image: koendelaat/sbfspot-collector:0.0.6
     volumes:
       - "$PWD/data:/var/smadata"
       - "$PWD/config/SBFspot.cfg:/opt/sbfspot/SBFspot.cfg"
@@ -10,7 +10,7 @@ services:
 
   uploader:
     restart: unless-stopped
-    image: koendelaat/sbfspot-uploader:0.0.5
+    image: koendelaat/sbfspot-uploader:0.0.6
     volumes:
       - "$PWD/data:/var/smadata"
       - "$PWD/config/SBFspotUpload.cfg:/opt/sbfspot/SBFspotUpload.cfg"

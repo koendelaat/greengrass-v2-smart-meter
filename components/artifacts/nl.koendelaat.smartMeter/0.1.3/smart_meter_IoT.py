@@ -40,9 +40,12 @@ class IoTHandler:
         if self.api_key is None:
             raise RuntimeError("No API key found")
 
-        self.system_id = self.get_secret('pvoutput_systems').get(self.thing_name, {}).get('system_id')
+        system_settings = self.get_secret('pvoutput_systems').get(self.thing_name, {})
+        self.system_id = system_settings.get('system_id')
         if self.system_id is None:
             raise RuntimeError(f"No system_id found for {self.thing_name}")
+
+        self.dsmr_version = system_settings.get('dsmr', '5')
 
     def publish_data(self, payload):
         try:
@@ -70,8 +73,12 @@ class IoTHandler:
 def get_callback(db, iot_handler, pvoutput):
     def callback(telegram):
         message_timestamp = telegram.P1_MESSAGE_TIMESTAMP.value
-        if message_timestamp.second != 0:
-            return
+        if iot_handler.dsmr_version == '5':
+            if message_timestamp.second != 0:
+                return
+        else:
+            if message_timestamp.second >= 10:
+                return
         edt1 = telegram.ELECTRICITY_DELIVERED_TARIFF_1.value
         edt2 = telegram.ELECTRICITY_DELIVERED_TARIFF_2.value
         eut1 = telegram.ELECTRICITY_USED_TARIFF_1.value
@@ -118,7 +125,7 @@ if __name__ == '__main__':
         # connect and keep connected until interrupted by ctrl-c
         while True:
             # create serial or tcp connection
-            conn = create_connection(telegram_callback, loop)
+            conn = create_connection(telegram_callback, handler.dsmr_version, loop)
             transport, protocol = loop.run_until_complete(conn)
             # wait until connection it closed
             loop.run_until_complete(protocol.wait_closed())

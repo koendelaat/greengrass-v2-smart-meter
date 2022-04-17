@@ -13,9 +13,9 @@ class DummyParser:
         return telegram
 
 
-def create_connection(callback, loop):
+def create_connection(callback, dsmr_version, loop):
     def telegram_callback(telegram):
         callback(Telegram(telegram, DummyParser(), None))
 
     # return create_tcp_dsmr_reader("alpha.home.local", 8000, '4', telegram_callback, loop)
-    return create_dsmr_reader("/dev/ttyUSB0", '5', telegram_callback, loop)
+    return create_dsmr_reader("/dev/ttyUSB0", dsmr_version, telegram_callback, loop)
