@@ -17,13 +17,13 @@
 ---
 RecipeFormatVersion: 2020-01-25
 ComponentName: nl.koendelaat.sbfspot
-ComponentVersion: '0.0.6'
+ComponentVersion: '0.0.7'
 ComponentDescription: |
   Monitor SMA inverter and upload to PVOutput
 ComponentPublisher: Koen de Laat
 ComponentDependencies:
   aws.greengrass.SecretManager:
-    VersionRequirement: 2.1.0
+    VersionRequirement: ~2.1.0
     DependencyType: SOFT
   aws.greengrass.DockerApplicationManager:
     VersionRequirement: ~2.0.0

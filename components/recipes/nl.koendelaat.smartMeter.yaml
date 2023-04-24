@@ -17,13 +17,13 @@
 ---
 RecipeFormatVersion: 2020-01-25
 ComponentName: nl.koendelaat.smartMeter
-ComponentVersion: '0.1.3'
+ComponentVersion: '0.1.4'
 ComponentDescription: |
   Monitor smart meter and upload to PVOutput
 ComponentPublisher: Koen de Laat
 ComponentDependencies:
   aws.greengrass.SecretManager:
-    VersionRequirement: 2.1.0
+    VersionRequirement: ~2.1.0
     DependencyType: SOFT
 ComponentConfiguration:
   DefaultConfiguration:
